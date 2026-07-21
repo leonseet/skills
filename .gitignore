@@ -1,0 +1,16 @@
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Local agent install junk
+.agents/
+.claude/
+.cursor/
+.codex/
+skills-lock.json
+
+# Editor / OS
+.idea/
+.vscode/

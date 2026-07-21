@@ -1,0 +1,5 @@
+interface:
+  display_name: "Manual QA"
+  short_description: "Run a ticket's Manual QA checklist together"
+policy:
+  allow_implicit_invocation: false
