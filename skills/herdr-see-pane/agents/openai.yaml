@@ -1,0 +1,5 @@
+interface:
+  display_name: "Herdr See Pane"
+  short_description: "Show the other pane in the current Herdr tab"
+policy:
+  allow_implicit_invocation: false
