@@ -1,3 +1,0 @@
-interface:
-  display_name: "SeaweedFS S3"
-  short_description: "Read, write, update, and inspect SeaweedFS S3 objects"

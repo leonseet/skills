@@ -26,17 +26,13 @@ Skills authored in this package. Install with `npx skills add leonseet/skills`.
 | Skill           | Description                                                          | Install                                            |
 | --------------- | -------------------------------------------------------------------- | -------------------------------------------------- |
 | herdr-see-pane  | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane -g` |
-| manual-qa       | Run a ticket's Manual QA checklist — agent executes, human audits    | `npx skills add leonseet/skills@manual-qa`         |
-| seaweedfs       | Read/write/inspect SeaweedFS via its S3 gateway (`uv run` script)    | `npx skills add leonseet/skills@seaweedfs`         |
-| tune-sandcastle | Diagnose and improve `.sandcastle` agent-loop setups from run logs   | `npx skills add leonseet/skills@tune-sandcastle`   |
+| writing-commit  | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g` |
 
 
 ```bash
 # Quick install all my skills
 npx skills add leonseet/skills@herdr-see-pane -g -y
-npx skills add leonseet/skills@manual-qa -y
-npx skills add leonseet/skills@seaweedfs -y
-npx skills add leonseet/skills@tune-sandcastle -y
+npx skills add leonseet/skills@writing-commit -g -y
 ```
 
 
