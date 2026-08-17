@@ -1,0 +1,5 @@
+interface:
+  display_name: "Shape Plan"
+  short_description: "Shape the planning artifacts: product review, system architecture, program design, test strategy"
+policy:
+  allow_implicit_invocation: false
