@@ -1,10 +1,9 @@
 ---
-
-## name: shape-plan
-
+name: shape-plan
 description: Shape the planning artifacts before any implementation code — product review, system architecture, program design, test strategy. Name stages to run a subset; no argument runs all four.
 argument-hint: "[stages...] <what you're building>"
 disable-model-invocation: true
+---
 
 # Shape Plan
 
