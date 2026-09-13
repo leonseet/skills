@@ -42,6 +42,7 @@ Useful skills from other authors. Install each from its own repo:
 | agent-browser     | Browser automation via accessibility snapshots                   | `npx skills add vercel-labs/agent-browser@agent-browser -g -y` |
 | herdr             | Control Herdr agent terminal multiplexer                         | `npx skills add ogulcancelik/herdr@herdr -g -y`                |
 | mattpocock/skills | Matt Pocock's agent workflows (grill-me, TDD, reviews, and more) | `npx skills add mattpocock/skills -y`                          |
+| makenotion/skills | Notion CLI (`ntn`) for workers, public API, and file uploads     | `npx skills add makenotion/skills -y`                          |
 | impeccable        | Frontend design / redesign / polish / UX critique                | `npx skills add pbakaus/impeccable@impeccable -y`              |
 | langfuse          | Langfuse docs + CLI for traces, prompts, datasets, scores        | `npx skills add langfuse/skills@langfuse -y`                   |
 | milvus            | Operate Milvus with pymilvus (collections, search, RBAC)         | `npx skills add zilliztech/milvus-skill@milvus -y`             |
