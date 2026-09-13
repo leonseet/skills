@@ -23,11 +23,12 @@ npx skills add leonseet/skills -g
 Skills authored in this package. Install with `npx skills add leonseet/skills`.
 
 
-| Skill          | Description                                                          | Install                                               |
-| -------------- | -------------------------------------------------------------------- | ----------------------------------------------------- |
-| shape-plan     | Shape planning artifacts before any implementation code              | `npx skills add leonseet/skills@shape-plan -y`        |
-| herdr-see-pane | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane -g -y` |
-| writing-commit | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g -y` |
+| Skill              | Description                                                          | Install                                                   |
+| ------------------ | -------------------------------------------------------------------- | --------------------------------------------------------- |
+| shape-plan         | Shape planning artifacts before any implementation code              | `npx skills add leonseet/skills@shape-plan -y`            |
+| herdr-see-pane     | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane -g -y`     |
+| writing-commit     | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g -y`     |
+| system-design-lab  | Turns a system-design article into a runnable local walkthrough lab  | `npx skills add leonseet/skills@system-design-lab -y`     |
 
 
 
