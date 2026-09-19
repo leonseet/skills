@@ -1,0 +1,5 @@
+interface:
+  display_name: "Push Skill"
+  short_description: "Package a skill and push it to leonseet/skills"
+policy:
+  allow_implicit_invocation: false

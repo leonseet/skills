@@ -29,6 +29,7 @@ Skills authored in this package. Install with `npx skills add leonseet/skills`.
 | herdr-see-pane     | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane -g -y`     |
 | writing-commit     | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g -y`     |
 | system-design-lab  | Turns a system-design article into a runnable local walkthrough lab  | `npx skills add leonseet/skills@system-design-lab -y`     |
+| push-skill         | Package a local skill and push it to this repo                       | `npx skills add leonseet/skills@push-skill -g -y`         |
 
 ### system-design-lab
 
@@ -50,6 +51,16 @@ Companion docs live under `skills/system-design-lab/references/`:
 
 - `reference.md` — cloud → local stand-ins, ports, image pins, compose, walkthrough template
 - `example-ad-click.md` — write-path / streaming / lambda worked example (method, not a domain to clone)
+
+### push-skill
+
+Call `push-skill <skill>` (folder name or path to a directory with `SKILL.md`). The agent packages it like the other first-party skills — `SKILL.md`, `agents/openai.yaml`, companions under `references/` — updates this README, and pushes `main` on [leonseet/skills](https://github.com/leonseet/skills).
+
+```bash
+npx skills add leonseet/skills@push-skill -g -y
+```
+
+Layout and git rules: `skills/push-skill/references/packaging.md`.
 
 ## External Skills
 
