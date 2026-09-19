@@ -6,6 +6,8 @@ description: >-
   walkthrough.html. Use when the user pastes a Hello Interview / ByteByteGo /
   Grokking / system-design article link, says /system-design-lab, or asks to
   generate a lab they can click through, watch in viewers, and read the code.
+argument-hint: "<article-url>"
+disable-model-invocation: true
 ---
 
 # System Design Lab
@@ -19,6 +21,13 @@ Generate a local lab from a system-design article so the user can:
 `walkthrough.html` holds the current sessions. `docker-compose.yml` holds the services we need and also the viewer services required as well. `frontend/` is there to play with.
 
 Do not copy the ad-click domain into every lab. Recreate the *job* each article box does.
+
+Read companions only when the matching step needs them:
+
+| File | When |
+| --- | --- |
+| [references/reference.md](references/reference.md) | scaffolding: stand-ins, ports, compose, walkthrough template, visual tokens |
+| [references/example-ad-click.md](references/example-ad-click.md) | write-path / streaming / lambda articles only — method, not domain to clone |
 
 ## Learning loop
 
@@ -59,11 +68,11 @@ Ask the user where to write the lab if the current workspace is not empty. Defau
 
 ### 2. Distill a local architecture
 
-One OS process per diagram box. Cloud product names become local stand-ins — see [reference.md](reference.md). Do not recreate AWS.
+One OS process per diagram box. Cloud product names become local stand-ins — see [references/reference.md](references/reference.md). Do not recreate AWS.
 
 Only pull Flink, ClickHouse, MinIO, Redis, Kafka, etc. when that box exists in the design. A cache lesson does not need a lake.
 
-If the article is a write-path / streaming / lambda design, also read [example-ad-click.md](example-ad-click.md).
+If the article is a write-path / streaming / lambda design, also read [references/example-ad-click.md](references/example-ad-click.md).
 
 ### 3. Design labs before code
 
@@ -101,7 +110,7 @@ infra/            seed SQL, topic scripts
 
 ### 6. Compose + viewers
 
-`docker-compose.yml` is both the system *and* the classroom. Always include viewers for stores you actually run. Lab UI listens on **8090** (do not steal 8080). Port map and image pins: [reference.md](reference.md).
+`docker-compose.yml` is both the system *and* the classroom. Always include viewers for stores you actually run. Lab UI listens on **8090** (do not steal 8080). Port map and image pins: [references/reference.md](references/reference.md).
 
 Gateway serves the SPA and `walkthrough.html` (nginx + Vite build, walkthrough volume-mounted so HTML edits do not require a frontend rebuild).
 

@@ -1,0 +1,5 @@
+interface:
+  display_name: "System Design Lab"
+  short_description: "Turn a system-design article into a runnable local walkthrough lab"
+policy:
+  allow_implicit_invocation: false

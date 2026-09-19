@@ -30,7 +30,26 @@ Skills authored in this package. Install with `npx skills add leonseet/skills`.
 | writing-commit     | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g -y`     |
 | system-design-lab  | Turns a system-design article into a runnable local walkthrough lab  | `npx skills add leonseet/skills@system-design-lab -y`     |
 
+### system-design-lab
 
+Paste a Hello Interview / ByteByteGo / Grokking (or similar) article URL, say `/system-design-lab`, or ask for a lab you can click through. The agent should produce:
+
+- a playable `frontend/`
+- `docker-compose.yml` for the article's boxes **and** the viewer UIs those stores need
+- session-based `walkthrough.html` (Lab 0 … Lab N)
+
+Then:
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:8090/walkthrough.html`. Each lab is one hop: UI action → viewer shows the bytes → named file.
+
+Companion docs live under `skills/system-design-lab/references/`:
+
+- `reference.md` — cloud → local stand-ins, ports, image pins, compose, walkthrough template
+- `example-ad-click.md` — write-path / streaming / lambda worked example (method, not a domain to clone)
 
 ## External Skills
 
