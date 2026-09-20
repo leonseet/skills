@@ -82,7 +82,7 @@ CLI: processor / archiver / olap-writer / reconciler logs.
 
 No extra stores. No CloudWatch clone.
 
-## Request path (what README + walkthrough both print)
+## Request path (README may print this ASCII; walkthrough `#map` must be SVG lanes)
 
 ```
 User click

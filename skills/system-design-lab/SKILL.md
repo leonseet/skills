@@ -112,18 +112,22 @@ infra/            seed SQL, topic scripts
 
 `docker-compose.yml` is both the system *and* the classroom. Always include viewers for stores you actually run. Lab UI listens on **8090** (do not steal 8080). Port map and image pins: [references/reference.md](references/reference.md).
 
-Gateway serves the SPA and `walkthrough.html` (nginx + Vite build, walkthrough volume-mounted so HTML edits do not require a frontend rebuild).
+Gateway serves the SPA and `walkthrough.html` (nginx + Vite build, walkthrough volume-mounted so HTML edits do not require a frontend rebuild). Send CORS `*` on the gateway so a `file://` or editor preview of `walkthrough.html` can still call `:8090`.
 
 ### 7. Walkthrough + README
 
 Same paper/ink serif look as the `ad_click_aggregator` lab’s `frontend/src/styles.css` / `walkthrough.html`.
 
-README is one command (`docker compose up --build`), a viewer table with URLs and creds, “why each box exists,” and the request-path ASCII.
+`#map` (**What each box is for**) is SVG request-path lanes in the architecture colors — not a dark ASCII `<pre>`. If you ship **Live peek**, it must target `http://localhost:8090` with a refresh control; relative-only `fetch("/…")` dies when the HTML is opened as a file. Recipes: [references/reference.md](references/reference.md).
+
+README is one command (`docker compose up --build`), a viewer table with URLs and creds, and “why each box exists.” A short path table in README is fine; do not treat that ASCII as the walkthrough map.
 
 ### 8. Verify
 
 - `docker compose config` must parse
 - If Docker is available: `docker compose up --build`, then hit `/` and `/walkthrough.html`
+- Curl the peek / list routes on `:8090` — JSON, not the SPA HTML
+- Open the walkthrough: peek status becomes `Updated …` (not `Failed to fetch` / stuck on `loading…`); `#map` is an SVG with clickable boxes
 - Walk one lab: UI action → viewer shows bytes → named file exists
 - Stop when the loop works. Do not polish past the labs.
 
@@ -142,5 +146,7 @@ then open `http://localhost:8090/walkthrough.html` and do every lab without read
 - Generic microservice demo with no article lessons in the code
 - Compose stack with no viewers
 - Walkthrough that is a blog post (no **Do this** / no viewer)
+- Live peek that only `fetch("/api")` against the current origin (no `:8090` fallback, no refresh, no CORS)
+- “What each box is for” as a dark ASCII `<pre>` — users cannot scan it; use architecture-style SVG lanes
 - Shipping Flink/ClickHouse/MinIO “because the gold standard has them”
 - Production hardening (auth, TLS, k8s, multi-AZ) unless the article *is* that lesson
