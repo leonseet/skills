@@ -45,11 +45,11 @@ Then:
 docker compose up --build
 ```
 
-Open `http://localhost:8090/walkthrough.html`. Each lab is one hop: UI action → viewer shows the bytes → named file. Live peek must call `:8090` with a refresh control (and gateway CORS) so a file preview still works. **What each box is for** is SVG request-path lanes, not ASCII.
+Open `http://localhost:8090/walkthrough.html`. Each lab is one hop: UI action → viewer shows the bytes → named file. A **Code** line opens that file in Cursor. The architecture diagram uses orthogonal edges that meet every box. Live peek must call `:8090` with a refresh control (and gateway CORS) so a file preview still works. **What each box is for** is SVG request-path lanes, not ASCII.
 
 Companion docs live under `skills/system-design-lab/references/`:
 
-- `reference.md` — cloud → local stand-ins, ports, image pins, compose, walkthrough template, peek + `#map` recipes
+- `reference.md` — cloud → local stand-ins, ports, image pins, compose, walkthrough template, Cursor code links, architecture SVG, peek + `#map` recipes
 - `example-ad-click.md` — write-path / streaming / lambda worked example (method, not a domain to clone)
 
 ### push-skill

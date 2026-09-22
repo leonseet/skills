@@ -81,7 +81,7 @@ Single static HTML, same visual language as the frontend (see below). Served at 
 
 ### Required sections (in order)
 
-1. **How to use** — keep this tab open; do the lab in the UI; open the viewer
+1. **How to use** — keep this tab open; do the lab in the UI; open the viewer. One sentence: a **Code** path opens that file in Cursor.
 2. **TOC** — `#architecture`, `#map`, `#viewers`, `#lab0` … `#labN`
 3. **System architecture** — one SVG; every box is a link to its lab (or `/` / `/analyst`). Legend for client / service / store / job and for sync / stream / batch edges
 4. **Live peek** (optional) — if present, follow [Live peek](#live-peek-if-the-section-exists). Do not ship a one-shot relative `fetch`
@@ -100,7 +100,7 @@ Single static HTML, same visual language as the frontend (see below). Served at 
     <p class="eyebrow">This lab · <a href="#architecture">full architecture</a></p>
     <!-- SVG of THIS hop only. Highlight the active box; fade context. -->
   </figure>
-  <p><strong>Code:</strong> <span class="file">path/to/file.py</span> <code>symbol</code></p>
+  <p><strong>Code:</strong> <a class="file" title="Open in Cursor" href="cursor://file/ABS/path/to/file.py:21">path/to/file.py</a> <a class="goto" title="Open in Cursor" href="cursor://file/ABS/path/to/file.py:21"><code>symbol</code></a></p>
   <p><strong>Do this</strong></p>
   <ol>
     <li>UI action with a real href (e.g. <a href="/">User page</a>).</li>
@@ -111,6 +111,48 @@ Single static HTML, same visual language as the frontend (see below). Served at 
   <pre>docker compose exec …</pre>
 </section>
 ```
+
+`ABS` is the lab directory’s absolute path. See [Code links](#code-links-open-in-cursor).
+
+### Code links (open in Cursor)
+
+Every **Code** line is a clickable deep link. The file path opens that file. A symbol next to it opens the same file on the line where that function is defined. Leave other `<code>` chips alone (API paths, SQL, Redis keys, docker commands).
+
+Resolve the lab directory to an absolute path. The href is `cursor://file` plus that absolute path plus `:` plus the 1-based line:
+
+`cursor://file/Users/…/lab/services/chat/main.py:314`
+
+The absolute path already starts with `/`, so do not add another slash after `file`. Encode each path segment and keep the slashes. Use the line of the `def` (or line 1 when the reference has no symbol). When one file is listed with several symbols, the path opens at the first symbol and each symbol is its own link.
+
+`#fdba74` is for file paths inside a dark `<pre>`. On the cream card, links use the accent color and an underline so they read as clickable:
+
+```css
+a.file {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+a.file:hover { color: var(--ink); }
+a.goto { color: inherit; text-decoration: none; }
+a.goto code { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+a.goto:hover code { color: var(--ink); }
+```
+
+The first click may ask the browser to allow opening Cursor.
+
+### Drawing the architecture SVG
+
+Orthogonal connectors only. A stroke is a horizontal run, then a vertical run. Do not draw a diagonal, and do not end a stroke in empty space.
+
+- Every box has an edge. A second copy of a box (another worker, another store) is stacked and gets its own short edge so the two edges do not cross.
+- A return path (SSE, the response) travels in the margin outside the boxes, back to the client. It does not leave a box and stop beside it.
+- Writes from a service drop to a horizontal bus, then down into each store.
+- Edge labels sit in the gutter between boxes. They do not sit inside a box, and they do not clip the viewBox. Keep about 16px of padding inside the viewBox; a label whose baseline is near `y=0` is cut off.
+- The paragraph under the diagram names each stroke (solid sync HTTP, dashed stream, accent dashed return). The swatch row matches those strokes.
+- The same rules apply to each lab’s mini SVG and to `#map`.
+- The walkthrough file is volume-mounted, and browsers cache it. After an SVG edit, reload with `?v=` and confirm the new strokes are the ones on screen.
 
 ### Live peek (if the section exists)
 
@@ -233,7 +275,7 @@ body {
 }
 ```
 
-Eyebrow: uppercase, 0.12em letter-spacing, sans, accent color. Nav chips: pill, 999px radius. Code in walkthrough: dark `#1c1917` / `#fef3c7`, file paths `#fdba74`.
+Eyebrow: uppercase, 0.12em letter-spacing, sans, accent color. Nav chips: pill, 999px radius. Code in a dark `<pre>`: `#1c1917` / `#fef3c7`, file paths `#fdba74`. **Code** links on the cream card use `--accent` and an underline — see [Code links](#code-links-open-in-cursor).
 
 ## Code style
 
@@ -279,3 +321,7 @@ curl -sS -o /dev/null -w "%{http_code}" http://localhost:8090/walkthrough.html
 Walk Lab 0 in the browser: UI action → viewer → named file.
 
 If Live peek exists: `curl` those routes on `:8090` (JSON), then open `/walkthrough.html` and confirm `#peek-status` becomes `Updated …`. `#map` must contain an `<svg>` with clickable boxes — fail the lab if the map is only a `<pre>`.
+
+Architecture SVG: every stroke meets a box, edges do not cross, and no label is clipped by the viewBox. Reload with `?v=` if the browser still shows the previous diagram.
+
+Each **Code** line is an `<a class="file" href="cursor://file/…:LINE">`, and each named symbol is an `<a class="goto">` to that function’s line.

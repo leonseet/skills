@@ -72,7 +72,7 @@ User cards print `impression_id`, HMAC prefix, and “href is `/click` not nike.
 | 7 | Raw lake | After a click | MinIO `raw-clicks/dt=…/ad=…` |
 | 8 | Lambda batch | Simulate miss → Reconcile | Chart `source` flips; MinIO still has JSON |
 
-Each lab has a mini SVG of that hop only, **Code** file names, **Do this**, and a CLI fallback.
+Each lab has a mini SVG of that hop only, **Code** links that open those files in Cursor, **Do this**, and a CLI fallback.
 
 ## Viewers this article earned
 

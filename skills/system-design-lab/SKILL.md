@@ -35,7 +35,7 @@ Every generated lab must close this loop:
 
 1. Click something in `frontend/`
 2. Watch the bytes land in a viewer (or `docker compose logs` / `exec`)
-3. Read the exact file the walkthrough names
+3. Read the exact file the walkthrough names. The **Code** line is a Cursor link to that file and line.
 
 If a box cannot be triggered from the UI and inspected in a viewer, it does not belong in the first cut — or it needs a lab button (simulate miss, reconcile, replay, expire, …).
 
@@ -81,7 +81,7 @@ Numbered sessions: Lab 0 … Lab N. One concept each. Design the sessions *befor
 Each lab must include:
 
 - Mini path SVG (this hop only) with a link back to the full architecture
-- **Code:** exact files + symbols
+- **Code:** exact files + symbols, as Cursor deep links (recipe in [references/reference.md](references/reference.md))
 - **Do this:** UI clicks or one API call
 - **Viewer:** which companion UI shows the bytes
 - **If viewer is down:** a `docker compose exec …` CLI
@@ -118,7 +118,7 @@ Gateway serves the SPA and `walkthrough.html` (nginx + Vite build, walkthrough v
 
 Same paper/ink serif look as the `ad_click_aggregator` lab’s `frontend/src/styles.css` / `walkthrough.html`.
 
-`#map` (**What each box is for**) is SVG request-path lanes in the architecture colors — not a dark ASCII `<pre>`. If you ship **Live peek**, it must target `http://localhost:8090` with a refresh control; relative-only `fetch("/…")` dies when the HTML is opened as a file. Recipes: [references/reference.md](references/reference.md).
+`#map` (**What each box is for**) is SVG request-path lanes in the architecture colors — not a dark ASCII `<pre>`. The architecture SVG uses orthogonal edges that meet every box, with labels inside the viewBox. Each **Code** line is a `cursor://file/…:line` link that opens that file in Cursor. If you ship **Live peek**, it must target `http://localhost:8090` with a refresh control; relative-only `fetch("/…")` dies when the HTML is opened as a file. Recipes: [references/reference.md](references/reference.md).
 
 README is one command (`docker compose up --build`), a viewer table with URLs and creds, and “why each box exists.” A short path table in README is fine; do not treat that ASCII as the walkthrough map.
 
@@ -128,6 +128,8 @@ README is one command (`docker compose up --build`), a viewer table with URLs an
 - If Docker is available: `docker compose up --build`, then hit `/` and `/walkthrough.html`
 - Curl the peek / list routes on `:8090` — JSON, not the SPA HTML
 - Open the walkthrough: peek status becomes `Updated …` (not `Failed to fetch` / stuck on `loading…`); `#map` is an SVG with clickable boxes
+- Architecture SVG: every stroke meets a box, edges do not cross, and no label is clipped by the viewBox. Reload with `?v=` if the browser still shows the previous diagram
+- Each **Code** line is an `<a href="cursor://file/…:LINE">`. A symbol link lands on that function
 - Walk one lab: UI action → viewer shows bytes → named file exists
 - Stop when the loop works. Do not polish past the labs.
 
@@ -148,5 +150,7 @@ then open `http://localhost:8090/walkthrough.html` and do every lab without read
 - Walkthrough that is a blog post (no **Do this** / no viewer)
 - Live peek that only `fetch("/api")` against the current origin (no `:8090` fallback, no refresh, no CORS)
 - “What each box is for” as a dark ASCII `<pre>` — users cannot scan it; use architecture-style SVG lanes
+- Architecture SVG with a stroke that ends in empty space, edges that cross, or a label cut off by the viewBox
+- **Code** as plain text (`<span class="file">`) the user cannot click open in Cursor
 - Shipping Flink/ClickHouse/MinIO “because the gold standard has them”
 - Production hardening (auth, TLS, k8s, multi-AZ) unless the article *is* that lesson
