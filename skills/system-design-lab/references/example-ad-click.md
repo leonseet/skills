@@ -1,110 +1,42 @@
-# Example: Hello Interview “Scaling Writes” → this lab
+# Example: "Scaling Writes" (ad-click aggregator)
 
-Read this only when the article is a **write-path / streaming / lambda** design. Do not clone the ad-click domain for unrelated articles. Use it to see how boxes, stand-ins, seed data, labs, and viewers line up.
+Use this for write-path, streaming or lambda articles only. Copy the method, not the domain.
 
-Source repo: the `ad_click_aggregator` lab.
+**Problem:** 10k clicks/s must not share a DB with advertiser `GROUP BY`s. Record each click cheaply, pre-aggregate on the write path, and query a small OLAP table.
 
-## Article problem
-
-10k clicks/s must not share a database with advertiser `GROUP BY` queries. Record every click cheaply, pre-aggregate on the write path, query a small OLAP table.
-
-## Cloud names → local boxes
-
-| Lesson | Local process | Why |
+| Box | Local | Lesson in code |
 | --- | --- | --- |
-| ALB / API gateway | `gateway` nginx `:8090` | One entry; fan-out `/ads` `/click` `/analytics` |
-| Ad DB | Postgres `ads` table | Catalog only; targeting out of scope |
-| Ad Placement | `services/ad_placement` | Mint `impression_id`, HMAC, Redis `issued:` |
-| Cache | Redis | Dedupe **before** the stream |
-| Click Processor | `services/click_processor` | Verify → dedupe → **Kafka first** → cache → 302 |
-| Kinesis | Kafka `ad-clicks` (6 partitions, 7-day retention) | Absorb spikes; replay |
-| Flink / Kinesis Analytics | Flink SQL `jobs/flink/clicks.sql` | `COUNT(*)` per `(ad_id, minute)`, ~2s flush |
-| ClickHouse sink connector | `jobs/olap_writer` | JDBC has no ClickHouse upsert dialect |
-| OLAP | ClickHouse `click_counts` | Advertisers query this, never raw events |
-| Analytics API | `services/analytics` | `GET /metrics`, `POST /reconcile`, `POST /simulate-miss` |
-| Firehose / Connect S3 | `jobs/archiver` → MinIO `raw-clicks` | Raw lake |
-| Spark / MapReduce | `jobs/reconciler` | Re-aggregate lake; overwrite OLAP |
+| API gateway | `gateway` :8090 → `/ads` `/click` `/analytics` | |
+| Ad Placement | `services/ad_placement` | mints an `impression_id` and signs it with HMAC (`shared/hmac_util.py`) |
+| Click Processor | `services/click_processor` | verify → dedupe on Redis `clicked:` → **Kafka first** → cache → 302 |
+| Kinesis | Kafka `ad-clicks`, 6 partitions, 7-day retention | replay; hot key `ad_id:N` (seed `nike-lebron`, 4 shards) |
+| Flink | `jobs/flink/clicks.sql` | `COUNT(*)` per `(ad_id, minute)` |
+| OLAP | ClickHouse `click_counts` `ReplacingMergeTree` | a `source` column: `flink` / `reconciler` / `simulated-miss` |
+| Firehose → S3 | `jobs/archiver` → MinIO `raw-clicks` | raw lake |
+| Spark | `jobs/reconciler` | re-aggregate the lake and overwrite OLAP (lambda) |
+| Analytics API | `services/analytics` | `/metrics`, `/reconcile`, `/simulate-miss` |
 
-Kafka is the Kinesis stand-in. The reconciler is the Spark stand-in. Same jobs, less cluster ceremony.
+**Roles:**
+- `/` user: place an impression, click (302)
+- `/advertiser/:id`: the 302 landing page; its back button replays a click (Lab 3)
+- `/analyst`: live chart, plus simulate miss and reconcile
 
-## Lesson notes that show up in code
+**Labs** (each lab: concept → viewer):
+- Lab 0: catalog → Adminer
+- Lab 1: HMAC → Redis `issued:`
+- Lab 2: Kafka first → Kafka UI
+- Lab 3: idempotency → log `skip Kafka`
+- Lab 4: hot shards → Kafka keys
+- Lab 5: speed layer → Flink :8081
+- Lab 6: query path → ClickHouse Play
+- Lab 7: raw lake → MinIO
+- Lab 8: simulate a miss → reconcile flips `source`
 
-These are the reason the lab exists. Each one is a docstring, a comment, or seed data — not a README-only claim.
-
-| Lesson | Where it lives |
-| --- | --- |
-| `<a href>` is `/click`, never the advertiser URL | `ad_placement` builds `click_url`; `AdvertiserPage` explains the 302 |
-| HMAC stops forged IDs and ad-id swaps | `shared/hmac_util.py` |
-| Write stream before cache | `click_processor`: produce, then `SET clicked:` |
-| Dedupe before Kafka so a retry cannot split minute windows | `clicked:` check returns 302 without produce |
-| Celebrity / hot shard: key `ad_id:N`, payload `ad_id` stays clean | `kafka_key_for`; seed `nike-lebron` `celebrity_shards=4` |
-| Checkpoints vs 7-day replay | Flink SQL comments; Kafka `KAFKA_LOG_RETENTION_HOURS: 168` |
-| Lambda: speed layer vs batch; raw objects win | Flink + olap-writer vs archiver + reconciler; `source` column |
-| Simulate a miss so reconcile is visible | `POST /analytics/simulate-miss` + Analyst buttons |
-
-## Seed the hard case
-
-`infra/postgres/init.sql` is not three generic ads. `nike-lebron` is `is_celebrity` with 4 shards so Lab 4 has something to look at. `bean-there` is the control (plain `ad_id` key).
-
-OLAP: `click_counts` is `ReplacingMergeTree(updated_at)` so Flink upserts and reconciler overwrites are the same insert path. `source` is `flink` | `reconciler` | `simulated-miss`.
-
-## Frontend roles
-
-| Route | Persona | Causes |
-| --- | --- | --- |
-| `/` User | End user | Place impression, click (302), new impression (retargeting) |
-| `/advertiser/:adId` | Advertiser landing | Proves the 302; back-button retry for Lab 3 |
-| `/analyst` | Advertiser analyst | Polls ClickHouse every 3s; simulate miss; reconcile |
-
-User cards print `impression_id`, HMAC prefix, and “href is `/click` not nike.com” so Labs 1–4 do not need DevTools.
-
-## Labs (the sessions)
-
-| Lab | Concept | Do this | Viewer |
-| --- | --- | --- | --- |
-| 0 | Catalog | Open `ads` table | Adminer `:8093` |
-| 1 | Place + HMAC | New impression; copy id | Redis Commander `issued:` |
-| 2 | Click + Kafka first + 302 | Visit advertiser | Kafka UI `ad-clicks` + processor logs + Redis `clicked:` |
-| 3 | Idempotency | Back + same click | Processor log `skip Kafka`; Kafka count unchanged |
-| 4 | Hot shards | Several Nike clicks | Kafka keys `nike-lebron:0..3`; Analyst still one series |
-| 5 | Speed layer | Open job graph | Flink `:8081` + Kafka `ad-clicks-aggregated` + olap-writer logs |
-| 6 | Query path | Analyst chart | ClickHouse Play `click_counts FINAL` |
-| 7 | Raw lake | After a click | MinIO `raw-clicks/dt=…/ad=…` |
-| 8 | Lambda batch | Simulate miss → Reconcile | Chart `source` flips; MinIO still has JSON |
-
-Each lab has a mini SVG of that hop only, **Code** links that open those files in Cursor, **Do this**, and a CLI fallback.
-
-## Viewers this article earned
-
-Built-in: Lab UI `:8090`, Flink `:8081`, ClickHouse Play `:8123`, MinIO `:9001`.
-Companion: Kafka UI `:8091`, Redis Commander `:8092`, Adminer `:8093`.
-CLI: processor / archiver / olap-writer / reconciler logs.
-
-No extra stores. No CloudWatch clone.
-
-## Request path (README may print this ASCII; walkthrough `#map` must be SVG lanes)
-
-```
-User click
-  → GET /click?ad_id&impression_id&sig
-  → HMAC check
-  → Redis clicked:{id}?  yes → 302, no Kafka
-  → Kafka topic ad-clicks  (key = ad_id or ad_id:N)
-  → Redis SET clicked:{id}
-  → 302 /advertiser/{ad_id}
-
-ad-clicks ─┬→ Flink → ad-clicks-aggregated → olap-writer → ClickHouse
-           └→ archiver → MinIO → reconciler (cron or button) → ClickHouse
-```
-
-## How to reuse the *method*
-
-When generating a new lab, fill this same table for the new article:
-
-1. Problem in one sentence
-2. Each article box → local process + file
-3. Lesson notes → exact file they will live in
-4. Seed row that makes the hard case visible
-5. Role pages and the buttons that cause each lesson
-6. One lab per lesson, each with a viewer
-7. Only the viewers those stores need
+**Method for a new article:**
+1. State the problem in one sentence.
+2. Map each box to a process and a file.
+3. Map each lesson to the file it will live in.
+4. Pick the seed row that makes the hard case visible.
+5. Define role pages and the buttons that cause each lesson.
+6. Write one lab per lesson, each with a viewer.
+7. Add only the viewers those stores need.

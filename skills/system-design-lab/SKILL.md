@@ -12,145 +12,64 @@ disable-model-invocation: true
 
 # System Design Lab
 
-Generate a local lab from a system-design article so the user can:
+Build a local lab where the user **clicks in the UI → watches the bytes land in a viewer → reads the exact code**. A box that can't close that loop is cut, or gets a lab button (simulate miss, expire, reconcile, reset).
 
-- try it in the UI
-- see the change in the services
-- review the code to understand how they flow
-
-`walkthrough.html` holds the current sessions. `docker-compose.yml` holds the services we need and also the viewer services required as well. `frontend/` is there to play with.
-
-Do not copy the ad-click domain into every lab. Recreate the *job* each article box does.
-
-Read companions only when the matching step needs them:
-
-| File | When |
+| Read | When |
 | --- | --- |
-| [references/reference.md](references/reference.md) | scaffolding: stand-ins, ports, compose, walkthrough template, visual tokens |
-| [references/example-ad-click.md](references/example-ad-click.md) | write-path / streaming / lambda articles only — method, not domain to clone |
-
-## Learning loop
-
-Every generated lab must close this loop:
-
-1. Click something in `frontend/`
-2. Watch the bytes land in a viewer (or `docker compose logs` / `exec`)
-3. Read the exact file the walkthrough names. The **Code** line is a Cursor link to that file and line.
-
-If a box cannot be triggered from the UI and inspected in a viewer, it does not belong in the first cut — or it needs a lab button (simulate miss, reconcile, replay, expire, …).
+| [references/reference.md](references/reference.md) | stand-ins, ports, compose, gateway, SVG, frontend, README |
+| [references/walkthrough.md](references/walkthrough.md) | writing `walkthrough.html` |
+| [references/example-ad-click.md](references/example-ad-click.md) | write-path / streaming articles only (method, not domain) |
+| `assets/` | copy these files; don't retype them |
 
 ## Workflow
 
-Copy and track:
-
 ```
-Lab progress:
 - [ ] 1. Read the article
-- [ ] 2. Distill local architecture
-- [ ] 3. Design labs before code
-- [ ] 4. Scaffold repo
-- [ ] 5. Implement services, jobs, frontend
-- [ ] 6. Compose + viewers
-- [ ] 7. walkthrough.html + README
-- [ ] 8. Verify
+- [ ] 2. Propose compose services, wait for go
+- [ ] 3. Design labs
+- [ ] 4. Build services + frontend
+- [ ] 5. Compose + viewers
+- [ ] 6. walkthrough.html + README
+- [ ] 7. Verify
 ```
 
-### 1. Read the article
+1. **Read.** Extract scale, each box and why it exists, sync/stream/batch edges, and the lesson notes that must show up in code (ordering, keys, idempotency, consistency, repair). If the workspace isn't empty, ask where to write; default is a sibling dir named after the article.
+2. **Propose.** One process per box; cloud products become local stand-ins; only stores the design has. List the services (image, job, port) and wait for approval.
+3. **Labs.** Lab 0…N, one concept each, designed before code so the UI and viewers exist to serve them.
+4. **Build for reading.** The user reads the code to learn the flow, so keep it plain:
+   - FastAPI, one file per service when it fits, handlers in flow order, module docstring = the lesson + order of operations.
+   - `print(f"[svc] …")` on every interesting event, so the logs are a viewer.
+   - Seed the hard case (hot key, conflict, the user the ACL denies).
+   - At the end of the main service: `GET /lab/peek` (state at a glance) and `POST /lab/reset` (back to seed: rows, blobs, in-flight uploads, caches).
+   - Frontend: one page per role, a **What to try** list, buttons that cause the design.
+5. **Compose** is the system and the classroom: a viewer for every store you run.
+6. **Walkthrough + README**: [walkthrough.md](references/walkthrough.md), [reference.md](references/reference.md#readme).
+7. **Verify.** Stop when every check passes; don't polish past the labs.
+   - `docker ps` first. If another project holds a port, tell the user; don't stop it. Then `docker compose config` and `docker compose up --build`.
+   - `curl` `:8090/`, `/walkthrough.html`, and every API route (JSON, not the SPA's HTML). `OPTIONS` returns 204.
+   - In a browser (`agent-browser`), from `:8090` **and** `file://`: Send every API accordion, the chained flow end to end, and one error case each (403/404/409/422). Reset brings the DB, object store and caches back to the seed. Peek shows `Updated …`.
+   - One lab end to end: UI action → viewer shows it → Code link opens the right line.
+   - SVGs: every stroke meets a box, no crossings, no clipped labels. Reload with `?v=`.
+   - At 420px wide, `scrollWidth` is 420 (no sideways scroll).
+   - `python3 tools/code_links.py` runs clean.
 
-Fetch the URL. Extract:
+## Gotchas
 
-- problem and scale numbers
-- component boxes and why each exists
-- sync HTTP vs async stream vs batch edges
-- **lesson notes that must show up in code** (ordering, keys, idempotency, consistency, repair)
-
-Ask the user where to write the lab if the current workspace is not empty. Default: a sibling directory named after the article (`url-shortener`, `news-feed`, …).
-
-### 2. Distill a local architecture
-
-One OS process per diagram box. Cloud product names become local stand-ins — see [references/reference.md](references/reference.md). Do not recreate AWS.
-
-Only pull Flink, ClickHouse, MinIO, Redis, Kafka, etc. when that box exists in the design. A cache lesson does not need a lake.
-
-If the article is a write-path / streaming / lambda design, also read [references/example-ad-click.md](references/example-ad-click.md).
-
-### 3. Design labs before code
-
-Numbered sessions: Lab 0 … Lab N. One concept each. Design the sessions *before* scaffolding so the UI and viewers exist to serve them.
-
-Each lab must include:
-
-- Mini path SVG (this hop only) with a link back to the full architecture
-- **Code:** exact files + symbols, as Cursor deep links (recipe in [references/reference.md](references/reference.md))
-- **Do this:** UI clicks or one API call
-- **Viewer:** which companion UI shows the bytes
-- **If viewer is down:** a `docker compose exec …` CLI
-
-### 4. Scaffold
-
-```
-README.md
-docker-compose.yml
-walkthrough.html
-gateway/          nginx + built UI; walkthrough mounted
-frontend/         Vite + React, one page per role
-services/         FastAPI, one folder per online box
-jobs/             stream / batch workers (only if needed)
-shared/           settings + clients
-infra/            seed SQL, topic scripts
-```
-
-### 5. Implement for walkthrough, not production
-
-- FastAPI + small Python. One file per service when it fits.
-- Module docstring restates the lesson (why this box, required order of operations).
-- `print` on every interesting event so `docker compose logs -f` is a viewer.
-- Seed data that makes the *hard* case visible (hot key, expired row, conflict, celebrity shard).
-- Frontend: role pages, a “What to try” list, buttons that *cause* the design.
-
-### 6. Compose + viewers
-
-`docker-compose.yml` is both the system *and* the classroom. Always include viewers for stores you actually run. Lab UI listens on **8090** (do not steal 8080). Port map and image pins: [references/reference.md](references/reference.md).
-
-Gateway serves the SPA and `walkthrough.html` (nginx + Vite build, walkthrough volume-mounted so HTML edits do not require a frontend rebuild). Send CORS `*` on the gateway so a `file://` or editor preview of `walkthrough.html` can still call `:8090`.
-
-### 7. Walkthrough + README
-
-Same paper/ink serif look as the `ad_click_aggregator` lab’s `frontend/src/styles.css` / `walkthrough.html`.
-
-`#map` (**What each box is for**) is SVG request-path lanes in the architecture colors — not a dark ASCII `<pre>`. The architecture SVG uses orthogonal edges that meet every box, with labels inside the viewBox. Each **Code** line is a `cursor://file/…:line` link that opens that file in Cursor. If you ship **Live peek**, it must target `http://localhost:8090` with a refresh control; relative-only `fetch("/…")` dies when the HTML is opened as a file. Recipes: [references/reference.md](references/reference.md).
-
-README is one command (`docker compose up --build`), a viewer table with URLs and creds, and “why each box exists.” A short path table in README is fine; do not treat that ASCII as the walkthrough map.
-
-### 8. Verify
-
-- `docker compose config` must parse
-- If Docker is available: `docker compose up --build`, then hit `/` and `/walkthrough.html`
-- Curl the peek / list routes on `:8090` — JSON, not the SPA HTML
-- Open the walkthrough: peek status becomes `Updated …` (not `Failed to fetch` / stuck on `loading…`); `#map` is an SVG with clickable boxes
-- Architecture SVG: every stroke meets a box, edges do not cross, and no label is clipped by the viewBox. Reload with `?v=` if the browser still shows the previous diagram
-- Each **Code** line is an `<a href="cursor://file/…:LINE">`. A symbol link lands on that function
-- Walk one lab: UI action → viewer shows bytes → named file exists
-- Stop when the loop works. Do not polish past the labs.
-
-## Output contract
-
-The user should be able to:
-
-```bash
-docker compose up --build
-```
-
-then open `http://localhost:8090/walkthrough.html` and do every lab without reading the article again.
+- The browser's HTTP cache hides CDN/cache HIT vs MISS: `fetch(url, { cache: "no-store" })`.
+- POST/PATCH/DELETE from `file://` send a preflight: nginx must answer `OPTIONS` with 204.
+- Presigned URLs are signed for the host the browser uses (`localhost:9000`), not the Docker hostname. Multipart parts are ≥ 5 MB except the last.
+- `:8090` answering HTML to an API call means another lab owns the port.
+- `walkthrough.html` is volume-mounted (no rebuild). nginx and frontend changes need `up --build`.
+- Any source edit moves lines: re-run `tools/code_links.py`.
 
 ## Anti-patterns
 
-- Generic microservice demo with no article lessons in the code
-- Compose stack with no viewers
-- Walkthrough that is a blog post (no **Do this** / no viewer)
-- Live peek that only `fetch("/api")` against the current origin (no `:8090` fallback, no refresh, no CORS)
-- “What each box is for” as a dark ASCII `<pre>` — users cannot scan it; use architecture-style SVG lanes
-- Architecture SVG with a stroke that ends in empty space, edges that cross, or a label cut off by the viewBox
-- **Code** as plain text (`<span class="file">`) the user cannot click open in Cursor
-- Shipping Flink/ClickHouse/MinIO “because the gold standard has them”
-- Production hardening (auth, TLS, k8s, multi-AZ) unless the article *is* that lesson
+- A generic microservice demo with no article lessons in the code; compose without viewers.
+- A walkthrough that reads like a blog post (no **Do this**, no viewer); an ASCII `#map`.
+- Code pointers as plain text or hand-typed line numbers.
+- A peek that only shows state; every API must be callable, plus reset.
+- Stores "for completeness"; production hardening (auth, TLS, k8s) unless that is the lesson.
+
+## Output contract
+
+`docker compose up --build`, open `http://localhost:8090/walkthrough.html`, and do every lab without reading the article again.
