@@ -23,61 +23,30 @@ npx skills add leonseet/skills -g
 Skills authored in this package. Install with `npx skills add leonseet/skills`.
 
 
-| Skill              | Description                                                          | Install                                                   |
-| ------------------ | -------------------------------------------------------------------- | --------------------------------------------------------- |
-| shape-plan         | Shape planning artifacts before any implementation code              | `npx skills add leonseet/skills@shape-plan -y`            |
-| herdr-see-pane     | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane -g -y`     |
-| writing-commit     | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit -g -y`     |
-| system-design-lab  | Turns a system-design article into a runnable local walkthrough lab  | `npx skills add leonseet/skills@system-design-lab -y`     |
-| push-skill         | Package a local skill and push it to this repo                       | `npx skills add leonseet/skills@push-skill -g -y`         |
-
-### system-design-lab
-
-Paste a Hello Interview / ByteByteGo / Grokking (or similar) article URL, say `/system-design-lab`, or ask for a lab you can click through. The agent should produce:
-
-- a playable `frontend/`
-- `docker-compose.yml` for the article's boxes **and** the viewer UIs those stores need
-- session-based `walkthrough.html` (Lab 0 … Lab N)
-
-Then:
-
-```bash
-docker compose up --build
-```
-
-Open `http://localhost:8090/walkthrough.html`. Each lab is one hop: UI action → viewer shows the bytes → named file. A **Code** line opens that file in Cursor. The architecture diagram uses orthogonal edges that meet every box. Live peek must call `:8090` with a refresh control (and gateway CORS) so a file preview still works. **What each box is for** is SVG request-path lanes, not ASCII.
-
-Companion docs live under `skills/system-design-lab/references/`:
-
-- `reference.md` — cloud → local stand-ins, ports, image pins, compose, walkthrough template, Cursor code links, architecture SVG, peek + `#map` recipes
-- `example-ad-click.md` — write-path / streaming / lambda worked example (method, not a domain to clone)
-
-### push-skill
-
-Call `push-skill <skill>` (folder name or path to a directory with `SKILL.md`). The agent packages it like the other first-party skills — `SKILL.md`, `agents/openai.yaml`, companions under `references/` — updates this README, and pushes `main` on [leonseet/skills](https://github.com/leonseet/skills).
-
-```bash
-npx skills add leonseet/skills@push-skill -g -y
-```
-
-Layout and git rules: `skills/push-skill/references/packaging.md`.
+| Skill             | Description                                                          | Install                                               |
+| ----------------- | -------------------------------------------------------------------- | ----------------------------------------------------- |
+| shape-plan        | Shape planning artifacts before any implementation code              | `npx skills add leonseet/skills@shape-plan -y`        |
+| herdr-see-pane    | View the other pane in the current Herdr tab (metadata + transcript) | `npx skills add leonseet/skills@herdr-see-pane`       |
+| writing-commit    | Commit messages as `type(scope): imperative summary`, subject only   | `npx skills add leonseet/skills@writing-commit`       |
+| system-design-lab | Turns a system-design article into a runnable local walkthrough lab  | `npx skills add leonseet/skills@system-design-lab -y` |
+| push-skill        | Package a local skill and push it to this repo                       | `npx skills add leonseet/skills@push-skill`           |
 
 ## External Skills
 
 Useful skills from other authors. Install each from its own repo:
 
 
-| Skill             | Why                                                              | Install                                                        |
-| ----------------- | ---------------------------------------------------------------- | -------------------------------------------------------------- |
-| agent-browser     | Browser automation via accessibility snapshots                   | `npx skills add vercel-labs/agent-browser@agent-browser -g -y` |
-| herdr             | Control Herdr agent terminal multiplexer                         | `npx skills add ogulcancelik/herdr@herdr -g -y`                |
-| mattpocock/skills | Matt Pocock's agent workflows (grill-me, TDD, reviews, and more) | `npx skills add mattpocock/skills -y`                          |
-| makenotion/skills | Notion CLI (`ntn`) for workers, public API, and file uploads     | `npx skills add makenotion/skills -y`                          |
-| impeccable        | Frontend design / redesign / polish / UX critique                | `npx skills add pbakaus/impeccable@impeccable -y`              |
-| langfuse          | Langfuse docs + CLI for traces, prompts, datasets, scores        | `npx skills add langfuse/skills@langfuse -y`                   |
-| milvus            | Operate Milvus with pymilvus (collections, search, RBAC)         | `npx skills add zilliztech/milvus-skill@milvus -y`             |
-| postgres          | PostgreSQL design, pgvector, PostGIS, TimescaleDB, migrations    | `npx skills add timescale/pg-aiguide@postgres -y`              |
-| last30days        | Research what people say about a topic in the last 30 days       | `npx skills add mvanhorn/last30days-skill@last30days -y`       |
+| Skill             | Why                                                              | Install                                                  |
+| ----------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
+| agent-browser     | Browser automation via accessibility snapshots                   | `npx skills add vercel-labs/agent-browser@agent-browser` |
+| herdr             | Control Herdr agent terminal multiplexer                         | `npx skills add ogulcancelik/herdr@herdr`                |
+| mattpocock/skills | Matt Pocock's agent workflows (grill-me, TDD, reviews, and more) | `npx skills add mattpocock/skills -y`                    |
+| makenotion/skills | Notion CLI (`ntn`) for workers, public API, and file uploads     | `npx skills add makenotion/skills -y`                    |
+| impeccable        | Frontend design / redesign / polish / UX critique                | `npx skills add pbakaus/impeccable@impeccable -y`        |
+| langfuse          | Langfuse docs + CLI for traces, prompts, datasets, scores        | `npx skills add langfuse/skills@langfuse -y`             |
+| milvus            | Operate Milvus with pymilvus (collections, search, RBAC)         | `npx skills add zilliztech/milvus-skill@milvus -y`       |
+| postgres          | PostgreSQL design, pgvector, PostGIS, TimescaleDB, migrations    | `npx skills add timescale/pg-aiguide@postgres -y`        |
+| last30days        | Research what people say about a topic in the last 30 days       | `npx skills add mvanhorn/last30days-skill@last30days -y` |
 
 
 
