@@ -52,10 +52,10 @@ policy:
 Under **My Skills**, add or update one table row:
 
 ```markdown
-| <skill-name> | <short what it does> | `npx skills add leonseet/skills@<skill-name> -y` |
+| <skill-name> | <short what it does> | `npx skills add leonseet/skills@<skill-name>` |
 ```
 
-Use `-g -y` in the install cell only when the skill is meant to be global (Herdr, commit style, and similar always-on helpers). Default is `-y`.
+Install cells never carry flags (no `-g`, no `-y`).
 
 Add a `### <skill-name>` subsection only when a human needs more than the table row (invoke form, output contract, companion files). Keep it short.
 

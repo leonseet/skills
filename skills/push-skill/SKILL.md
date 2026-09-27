@@ -80,7 +80,7 @@ npx skills add . --list
 Tell the user: commit, GitHub URL, and
 
 ```bash
-npx skills add leonseet/skills@<name> -y
+npx skills add leonseet/skills@<name>
 ```
 
 ## Stop if
