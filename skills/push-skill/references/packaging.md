@@ -15,7 +15,7 @@ skills/<skill-name>/
 - Folder name = frontmatter `name` = install id (`npx skills add leonseet/skills@<skill-name>`).
 - `SKILL.md` is required. Everything else is optional except `agents/openai.yaml` — always write that file.
 - Long docs, checklists, examples, and templates go in `references/`. If the source has loose `*.md` next to `SKILL.md`, move them into `references/` and rewrite links in `SKILL.md` (one level deep: `references/foo.md`).
-- Keep `scripts/` and `assets/` at the skill root if the source already uses them. Document script side effects in the package README when they are non-obvious.
+- Keep `scripts/` and `assets/` at the skill root if the source already uses them. Document non-obvious script side effects in `SKILL.md`.
 - Do not nest another skill inside this folder.
 
 ## SKILL.md frontmatter
@@ -57,7 +57,7 @@ Under **My Skills**, add or update one table row:
 
 Install cells never carry flags (no `-g`, no `-y`).
 
-Add a `### <skill-name>` subsection only when a human needs more than the table row (invoke form, output contract, companion files). Keep it short.
+The row is the skill's only README entry. Never add a `### <skill-name>` section.
 
 Do not list third-party skills under **My Skills**. Those stay in **External Skills**.
 

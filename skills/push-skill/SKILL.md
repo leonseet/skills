@@ -63,7 +63,7 @@ Overwrite the existing packaged copy of the same name. Do not rewrite the author
 
 ### 5. README
 
-Add or update the **My Skills** row. Add a short `### <name>` subsection only when a human needs invoke form or companion paths.
+Add or update the **My Skills** row. No per-skill `###` sections.
 
 ### 6. Verify
 
