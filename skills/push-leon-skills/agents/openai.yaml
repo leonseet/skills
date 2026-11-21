@@ -1,0 +1,5 @@
+interface:
+  display_name: "Push Leon Skills"
+  short_description: "Package a skill and push it to its home repo"
+policy:
+  allow_implicit_invocation: false
