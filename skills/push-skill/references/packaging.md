@@ -59,7 +59,7 @@ Install cells never carry flags (no `-g`, no `-y`).
 
 The row is the skill's only README entry. Never add a `### <skill-name>` section.
 
-Do not list third-party skills under **My Skills**. Those stay in **External Skills**.
+Do not list third-party skills in the README.
 
 ## Copy rules
 

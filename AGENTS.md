@@ -38,7 +38,7 @@ Recommended:
 
 | Put in this repo | Put elsewhere |
 | ---------------- | ------------- |
-| Skills you author and maintain | Third-party skills (link them in README instead) |
+| Skills you author and maintain | Third-party skills |
 | Portable workflows useful across projects | Always-on project rules (`AGENTS.md` / Cursor rules in the *consumer* repo) |
 | Stable, reviewable instructions | Secrets, private org runbooks, credentials |
 
