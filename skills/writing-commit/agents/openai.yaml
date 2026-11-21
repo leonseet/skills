@@ -1,5 +1,5 @@
 interface:
   display_name: "Writing Commit"
-  short_description: "Commit messages as type(scope): imperative summary"
+  short_description: "Commit messages as `type(scope): imperative summary`"
 policy:
   allow_implicit_invocation: true

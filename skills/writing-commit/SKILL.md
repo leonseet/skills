@@ -16,3 +16,5 @@ type(scope): imperative summary
 - **type** — conventional (`feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `perf`, …) matching what the change does
 - **scope** — short area from paths or concern (`skills`, `ingestion`, `cv`, …)
 - **summary** — imperative mood, lowercase start, no trailing period; match recent `git log` voice
+
+When the changes span more than one concern, show the proposed commits first (one line each: subject and files) and commit once the user agrees, unless they said to just commit.
