@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control GitLab"
+  short_description: "Operate a self-hosted GitLab through glab"
+policy:
+  allow_implicit_invocation: true

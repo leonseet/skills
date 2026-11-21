@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Langfuse"
+  short_description: "Operate a Langfuse v4 instance through the langfuse CLI and scripts/langfuse.py"
+policy:
+  allow_implicit_invocation: true

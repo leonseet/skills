@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control S3"
+  short_description: "Operate an S3-compatible object store through the aws CLI"
+policy:
+  allow_implicit_invocation: true

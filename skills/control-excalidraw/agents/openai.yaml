@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Excalidraw"
+  short_description: "Operate an Excalidraw+ workspace and local .excalidraw files through the excalidraw CLI"
+policy:
+  allow_implicit_invocation: true

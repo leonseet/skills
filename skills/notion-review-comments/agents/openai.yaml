@@ -1,0 +1,5 @@
+interface:
+  display_name: "Notion Review Comments"
+  short_description: "Answer and act on the open review comments of a Notion page"
+policy:
+  allow_implicit_invocation: false

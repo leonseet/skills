@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Notion"
+  short_description: "Operate a Notion workspace through the ntn CLI"
+policy:
+  allow_implicit_invocation: true

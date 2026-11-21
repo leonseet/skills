@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Temporal"
+  short_description: "Operate a Temporal server through scripts/temporal.py"
+policy:
+  allow_implicit_invocation: true

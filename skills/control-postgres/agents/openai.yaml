@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Postgres"
+  short_description: "Operate a PostgreSQL server through psql"
+policy:
+  allow_implicit_invocation: true

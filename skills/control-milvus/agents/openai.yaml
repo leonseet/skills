@@ -1,0 +1,5 @@
+interface:
+  display_name: "Control Milvus"
+  short_description: "Operate a Milvus instance through scripts/milvus.py on pymilvus"
+policy:
+  allow_implicit_invocation: true

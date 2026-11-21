@@ -1,0 +1,5 @@
+interface:
+  display_name: "Create Control Skill"
+  short_description: "Generate a proven control-<service> skill for operating a company service through one CLI"
+policy:
+  allow_implicit_invocation: false
